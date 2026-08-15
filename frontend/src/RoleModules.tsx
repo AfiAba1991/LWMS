@@ -3,11 +3,12 @@ import type { FormEvent } from 'react'
 import { api } from './lib/api'
 import { EquipmentModule } from './EquipmentModule'
 import { MaintenanceModule } from './MaintenanceModule'
+import { ResourceHandoverPanel } from './ResourceHandoverPanel'
 import './role-modules.css'
 
 export type SessionUser={id:number;full_name:string;email:string;must_change_password:boolean;assigned_facility_id:number|null;assigned_facility:{id:number;name:string;kind:string;location:string;capacity:number}|null;role_names:string[]}
 type Asset={id:number;identifier:string;status:string;notes?:string|null}
-type Resource={id:number;name:string;category:string;quantity:number;facility_id:number;assets:Asset[]}
+type Resource={id:number;name:string;category:string;quantity:number;facility_id:number;review_status:string;assets:Asset[]}
 type Usage={id:number;resource_id:number;quantity:number;usage_type:string;purpose:string;status:string;created_at:string}
 type Maintenance={id:number;title:string;details:string;priority:string;kind:string;status:string;resource_id:number;asset_id:number|null;asset_identifier:string|null;resolution:string|null;completion_notes:string|null;assistant_verification:string|null;verification_notes:string|null;parent_request_id:number|null;created_at:string}
 type HistoryEvent={id:number;action:string;from_status:string|null;to_status:string|null;notes:string;created_at:string;actor_name:string}
@@ -18,7 +19,7 @@ const pretty=(value:string|null|undefined)=>(value??'pending').replaceAll('_',' 
 function FacilityBanner({user,resourceCount}:{user:SessionUser;resourceCount:number}){
   const facility=user.assigned_facility
   if(!facility)return <div className="unassigned-warning">No laboratory or workshop is assigned to this account. Contact Super Admin.</div>
-  return <div className="assistant-facility"><span className="facility-mark">{facility.kind==='laboratory'?'LAB':'WS'}</span><div><small>ASSIGNED {facility.kind.toUpperCase()}</small><b>{facility.name}</b><em>{facility.location}</em></div><div className="facility-count"><strong>{resourceCount}</strong><span>resource groups</span></div></div>
+  return <><div className="assistant-facility"><span className="facility-mark">{facility.kind==='laboratory'?'LAB':'WS'}</span><div><small>ASSIGNED {facility.kind.toUpperCase()}</small><b>{facility.name}</b><em>{facility.location}</em></div><div className="facility-count"><strong>{resourceCount}</strong><span>resource groups</span></div></div><ResourceHandoverPanel facilityId={user.assigned_facility_id} compact/></>
 }
 
 export function RoleEquipment({user}:{user:SessionUser}){return has(user,'super_admin')?<EquipmentModule/>:<FacilityEquipment user={user}/>}
