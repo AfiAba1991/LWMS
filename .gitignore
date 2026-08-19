@@ -8,10 +8,10 @@ __pycache__/
 node_modules/
 dist/
 
-# Environment / secrets
-.env
-.env.*
-!.env.example
+# # Environment / secrets
+# .env
+# .env.*
+# !.env.example
 
 # SQLite / local databases
 *.db
